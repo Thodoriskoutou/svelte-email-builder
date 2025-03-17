@@ -47,68 +47,98 @@ async function createTemplate() {
 {:else}
     <p>No newsletters available.</p>
 {/if}
-
 <style>
+
+
+.welcome-message {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 40px auto;
+    max-width: 600px;
+}
+
+.welcome-message h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.subject-input {
+    width: 100%;
+    padding: 12px 20px;
+    margin-top: 15px;
+    font-size: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+.subject-input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
 .create-template-btn {
     background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 5px;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border-radius: 8px;
     cursor: pointer;
     margin-top: 20px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    width: 100%;
 }
 
 .create-template-btn:hover {
     background-color: #45a049;
-}
-.welcome-message {
-background-color: #f5f5f5;
-padding: 20px;
-margin-bottom: 20px;
-border-radius: 8px;
-text-align: center;
+    transform: translateY(-3px);
 }
 
-.welcome-message h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-}
-
+/* Newsletter List Styling */
 .newsletter-list {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin-top: 30px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .newsletter-item {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     padding: 20px;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .newsletter-item:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
     transform: translateY(-5px);
 }
 
 .newsletter-title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: #333;
     margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+
+.newsletter-title:hover {
+    color: #4CAF50;
 }
 
 .newsletter-date,
 .newsletter-author {
     font-size: 0.9rem;
-    color: #555;
+    color: #777;
     margin: 5px 0;
 }
 
@@ -120,21 +150,10 @@ text-align: center;
     font-weight: normal;
 }
 
-.newsletter-item h2 {
-    line-height: 1.4;
+.newsletter-item p {
+    margin: 5px 0;
 }
 
-.newsletter-list li {
-    transition: background-color 0.3s ease;
-}
 
-.newsletter-list li:hover {
-    background-color: #f1f1f1;
-}
-
-p {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.5;
-}
 
 </style>

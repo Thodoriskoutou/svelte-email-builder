@@ -74,33 +74,51 @@ async function deleteTemplate() {
 </div>
 
 
-<style>
-    .Container{
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        height: 100vh;
-    }
-    .bar{
-        flex: 1;
-        background-color: #61dafb;
-        color: #000;
-        padding: 10px;
-        display: flex;
-        max-height: 60px;
+<style>.Container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100vh;
+    background-color: #f7f8fa;
+}
 
-        button {
-            flex: 1;
-            padding: 10px;
-            margin-left: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            background-color: #000;
-            color: #fff;
-            border: 0px;
-            max-width: 150px;
-            cursor: pointer;
-        }
+.bar {
+    flex: 0 1 60px;
+    background-color: #4CAF50; 
+    color: #fff; 
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    max-height: 60px;
+    border-bottom: 1px solid #ccc;
+}
 
-    }
+.bar button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #333; /* Changed to dark gray */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    max-width: 150px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.bar button:hover {
+    background-color: #555; /* Lighter gray on hover */
+    transform: translateY(-3px);
+}
+
+.bar button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.7);
+}
+
 </style>
