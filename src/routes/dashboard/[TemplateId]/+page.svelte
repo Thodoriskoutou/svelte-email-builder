@@ -5,7 +5,7 @@ import { pb } from "$lib/pocketbase";
 import type { PageProps } from './$types';
 
 let { data }: PageProps = $props();
-let emailEditorRef = $state<EditorRef>()
+//let emailEditorRef = $state<EditorRef>()
 let editor:any
 let templateid = data.posts?.id;
 let templateSubject = data.posts?.Subject
@@ -30,20 +30,37 @@ const saveDesign = () => {
         };
         const record = await pb.collection('newsletters').update(`${templateid}`, data);
     })
+    alert("Design saved")
 }
-
+const onDesignLoad = (data: any) => {
+    console.log('onDesignLoad', data);
+};
 const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
+    
     console.log('onLoad', unlayer);
     editor = unlayer;
     unlayer.addEventListener('design:loaded', onDesignLoad);
     unlayer.loadDesign(data.posts?.Content);
+    
+    unlayer?.registerCallback("image", async function (file , done) {
+        done({ progress: 0})
+        console.log(file)
+
+        pb.collection('newsletters').update(templateid, {
+            "Images+": file.attachments[0]
+        })
+        .then((updatedRecord) => {
+            const images = updatedRecord.Images;
+            const newImage = images[images.length - 1];
+            const imageUrl = `http://127.0.0.1:8090/api/files/newsletters/${templateid}/${newImage}`
+            done({ progress: 100, url: imageUrl });
+        })
+        
+
+    })
 };
 
-const onDesignLoad = (data: any) => {
-    console.log('onDesignLoad', data);
-};
-
-const onReady: EmailEditorProps['onReady'] = (unlayer) => {
+const onReady: EmailEditorProps['onReady'] = async (unlayer) => {
     console.log('onReady', unlayer);
 };
 async function deleteTemplate() {
@@ -53,8 +70,6 @@ async function deleteTemplate() {
         window.location.href = '/dashboard';
     }
 }
-
-
 </script>
 
 
@@ -66,7 +81,7 @@ async function deleteTemplate() {
         <button onclick={deleteTemplate} >Delete template</button>
     </div>
     <EmailEdit onReady={onReady} onLoad={onLoad} options={{
-        version: "latest",
+        version: '1.157.0',
         appearance: {
             theme: "modern_light"
         }

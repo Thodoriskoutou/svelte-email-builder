@@ -45,12 +45,12 @@ import { pb } from '$lib/pocketbase'
 
 .container {
     max-width: 350px;
-    background: #F8F9FD;
-    background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(244, 247, 251) 100%);
+    background: #E8F9E9;
+    background: linear-gradient(0deg, rgb(233, 248, 233) 0%, rgb(204, 236, 204) 100%);
     border-radius: 40px;
     padding: 25px 35px;
     border: 5px solid rgb(255, 255, 255);
-    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
+    box-shadow: rgba(144, 211, 144, 0.8) 0px 30px 30px -20px;
     margin: 20px;
 }
 
@@ -58,7 +58,7 @@ import { pb } from '$lib/pocketbase'
     text-align: center;
     font-weight: 900;
     font-size: 30px;
-    color: rgb(16, 137, 211);
+    color: rgb(34, 139, 34);
 }
 
 .form {
@@ -72,21 +72,21 @@ import { pb } from '$lib/pocketbase'
     padding: 15px 20px;
     border-radius: 20px;
     margin-top: 15px;
-    box-shadow: #cff0ff 0px 10px 10px -5px;
+    box-shadow: #d6f8d6 0px 10px 10px -5px;
     border-inline: 2px solid transparent;
 }
 
 .form .input::-moz-placeholder {
-    color: rgb(170, 170, 170);
+    color: rgb(102, 153, 102);
 }
 
 .form .input::placeholder {
-    color: rgb(170, 170, 170);
+    color: rgb(102, 153, 102); 
 }
 
 .form .input:focus {
     outline: none;
-    border-inline: 2px solid #12B1D1;
+    border-inline: 2px solid #32CD32;
 }
 
 .form .forgot-password {
@@ -97,7 +97,7 @@ import { pb } from '$lib/pocketbase'
 
 .form .forgot-password a {
     font-size: 11px;
-    color: #0099ff;
+    color: #32CD32; 
     text-decoration: none;
 }
 
@@ -105,24 +105,24 @@ import { pb } from '$lib/pocketbase'
     display: block;
     width: 100%;
     font-weight: bold;
-    background: linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%);
+    background: linear-gradient(45deg, rgb(34, 139, 34) 0%, rgb(50, 205, 50) 100%); 
     color: white;
     padding-block: 15px;
     margin: 20px auto;
     border-radius: 20px;
-    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px;
+    box-shadow: rgba(144, 211, 144, 0.8) 0px 20px 10px -15px;
     border: none;
     transition: all 0.2s ease-in-out;
 }
 
 .form .login-button:hover {
     transform: scale(1.03);
-    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px;
+    box-shadow: rgba(144, 211, 144, 0.8) 0px 23px 10px -20px;
 }
 
 .form .login-button:active {
     transform: scale(0.95);
-    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px;
+    box-shadow: rgba(144, 211, 144, 0.8) 0px 15px 10px -10px;
 }
 
 .social-account-container {
@@ -133,7 +133,7 @@ import { pb } from '$lib/pocketbase'
     display: block;
     text-align: center;
     font-size: 10px;
-    color: rgb(170, 170, 170);
+    color: rgb(102, 153, 102); 
 }
 
 .social-account-container .social-accounts {
@@ -156,7 +156,6 @@ import { pb } from '$lib/pocketbase'
     transition: all 0.2s ease-in-out;
 }
 
-
 .social-account-container .social-accounts .social-button:hover {
     transform: scale(1.2);
 }
@@ -173,7 +172,8 @@ import { pb } from '$lib/pocketbase'
 
 .agreement a {
     text-decoration: none;
-    color: #0099ff;
+    color: #32CD32; 
     font-size: 9px;
 }
+
 </style>

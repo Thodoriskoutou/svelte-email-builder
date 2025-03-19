@@ -18,7 +18,10 @@ async function createTemplate() {
 
     location.reload();
 }
-
+function logout() {
+    pb.authStore.clear();
+    window.location.href = '/login';
+}
 
 </script>
 <section class="welcome-message">
@@ -29,6 +32,7 @@ async function createTemplate() {
         bind:value={subject} 
         class="subject-input" />
     <button class="create-template-btn" onclick={createTemplate}>Create Template</button>
+    <button class="logout-btn" onclick={logout}>Logout</button>
 </section>
 {#if data.posts}
     <ul class="newsletter-list">
@@ -59,7 +63,23 @@ async function createTemplate() {
     margin: 40px auto;
     max-width: 600px;
 }
+.logout-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
 
+.logout-btn:hover {
+    background-color: #e53935;
+    transform: translateY(-3px);
+}
 .welcome-message h1 {
     font-size: 2.5rem;
     color: #333;

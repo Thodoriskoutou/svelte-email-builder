@@ -11,7 +11,6 @@ let props:EmailEditorProps = $props()
 
 $effect(()=>{
     const root = createRoot(rootEl)
-    
     import('react-email-editor').then(({ EmailEditor })=>{
         const editor = createElement(EmailEditor,{...props},
         )

@@ -7,6 +7,7 @@ React Library used: https://github.com/unlayer/react-email-editor/tree/master/de
 #####
 How to run
 
-
+###
 bun install
+###
 bun run dev
