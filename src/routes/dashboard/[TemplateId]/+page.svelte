@@ -130,7 +130,7 @@ async function deleteTemplate() {
     margin-left: 10px;
     font-size: 14px;
     font-weight: bold;
-    background-color: #333; /* Changed to dark gray */
+    background-color: #333; 
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -142,7 +142,7 @@ async function deleteTemplate() {
 }
 
 .bar button:hover {
-    background-color: #555; /* Lighter gray on hover */
+    background-color: #555; 
     transform: translateY(-3px);
 }
 

@@ -128,11 +128,11 @@ img{
     list-style: none;
     padding: 0;
     margin-top: 30px;
-    max-width: 1200px; /* Increase max-width to accommodate more items side by side */
+    max-width: 1200px; 
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Automatically adjusts based on screen size */
-    gap: 20px; /* Space between grid items */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px; 
 }
 .newsletter-item {
     background-color: #ffffff;
