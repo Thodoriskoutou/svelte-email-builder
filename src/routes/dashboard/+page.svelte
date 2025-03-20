@@ -22,8 +22,11 @@ function logout() {
     pb.authStore.clear();
     window.location.href = '/login';
 }
+const puppeteer = require('puppeteer');
 
 </script>
+
+{#if pb.authStore}
 <section class="welcome-message">
     <h1>Welcome to the Email Builder!</h1>
     <input 
@@ -44,6 +47,9 @@ function logout() {
                 <p class="newsletter-author">By: {post.Created_by}</p>
                 <p class="newsletter-author">Updated By: {post.Updated_by}</p>
                 <p class="newsletter-author">Updated At: {post.Updated_at}</p>
+                {#if post.Preview}
+                    <img src={post.Preview.url}/>
+                {/if}
             </li>
         </a>
         {/each}
