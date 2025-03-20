@@ -23,6 +23,20 @@ const exportHtml = () => {
 const currentUser = pb.authStore.record;
 const saveDesign = () => {
     editor.saveDesign(async (design) => {
+        try{
+            const response = await fetch(`/dashboard/${templateid}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        currentUrl: window.location.href,
+                        TemplateId: templateid
+                    })
+                });
+                const result = await response.json();
+
+        }catch(err){
+            console.log(err)
+        }
         const data = {
             "Subject": templateSubject,
             "Updated_by": currentUser?.email,
@@ -30,6 +44,7 @@ const saveDesign = () => {
         };
         const record = await pb.collection('newsletters').update(`${templateid}`, data);
     })
+
     alert("Design saved")
 }
 const onDesignLoad = (data: any) => {

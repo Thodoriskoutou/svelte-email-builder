@@ -22,11 +22,9 @@ function logout() {
     pb.authStore.clear();
     window.location.href = '/login';
 }
-const puppeteer = require('puppeteer');
 
 </script>
 
-{#if pb.authStore}
 <section class="welcome-message">
     <h1>Welcome to the Email Builder!</h1>
     <input 
@@ -42,14 +40,12 @@ const puppeteer = require('puppeteer');
         {#each data.posts as post}
         <a href="/dashboard/{post.id}">
             <li class="newsletter-item">
+                <img src={`http://127.0.0.1:8090/api/files/newsletters/${post.id}/${post.Preview}`} alt="preview"/>
                 <h2 class="newsletter-title">{post.Subject}</h2>
                 <p class="newsletter-date">Created on: {post.Created_at}</p>
                 <p class="newsletter-author">By: {post.Created_by}</p>
                 <p class="newsletter-author">Updated By: {post.Updated_by}</p>
                 <p class="newsletter-author">Updated At: {post.Updated_at}</p>
-                {#if post.Preview}
-                    <img src={post.Preview.url}/>
-                {/if}
             </li>
         </a>
         {/each}
@@ -59,7 +55,9 @@ const puppeteer = require('puppeteer');
 {/if}
 <style>
 
-
+img{
+    width: 100%;
+}
 .welcome-message {
     background-color: #ffffff;
     padding: 30px;
@@ -130,10 +128,12 @@ const puppeteer = require('puppeteer');
     list-style: none;
     padding: 0;
     margin-top: 30px;
-    max-width: 800px;
+    max-width: 1200px; /* Increase max-width to accommodate more items side by side */
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Automatically adjusts based on screen size */
+    gap: 20px; /* Space between grid items */
 }
-
 .newsletter-item {
     background-color: #ffffff;
     border-radius: 12px;
