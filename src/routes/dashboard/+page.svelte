@@ -41,13 +41,15 @@ $effect(()=>{
 
 <section class="welcome-message">
     <h1>Welcome to the Email Builder!</h1>
-    <input 
-        type="text" 
-        placeholder="Enter subject..." 
-        bind:value={subject} 
-        class="subject-input" />
-    <button class="create-template-btn" onclick={createTemplate}>Create Template</button>
-    <button class="logout-btn" onclick={logout}>Logout</button>
+    <div class="input-button-group">
+        <input 
+            type="text" 
+            placeholder="Enter subject..." 
+            bind:value={subject} 
+            class="subject-input" />
+        <button class="create-template-btn" onclick={createTemplate}>Create Template</button>
+        <button class="logout-btn" onclick={logout}>Logout</button>
+    </div>
 </section>
 {#if data.posts}
     <ul class="newsletter-list">
@@ -75,8 +77,7 @@ $effect(()=>{
     <p>No newsletters available.</p>
 {/if}
 <style>
-    /* Base styles */
-    .welcome-message {
+     .welcome-message {
         background-color: #f5fff5;
         padding: 2rem;
         border-radius: 10px;
@@ -92,10 +93,14 @@ $effect(()=>{
         animation: slideInFromLeft 0.8s ease-out;
     }
 
+    .input-button-group {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
     .subject-input {
-        width: 100%;
         padding: 0.8rem;
-        margin-bottom: 1rem;
         border: 2px solid #c8e6c9;
         border-radius: 5px;
         font-size: 1rem;
@@ -120,7 +125,6 @@ $effect(()=>{
     .create-template-btn {
         background-color: #66bb6a;
         color: white;
-        margin-right: 1rem;
         animation: bounceIn 0.8s ease-out;
     }
 
@@ -257,6 +261,4 @@ $effect(()=>{
             opacity: 1;
         }
     }
-
-
 </style>
