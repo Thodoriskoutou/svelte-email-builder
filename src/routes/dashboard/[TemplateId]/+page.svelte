@@ -3,6 +3,7 @@ import type {EditorRef, EmailEditor, EmailEditorProps } from "react-email-editor
 import EmailEdit from "$lib/EmailEdit.svelte";
 import { pb } from "$lib/pocketbase";
 import type { PageProps } from './$types';
+  import { goto } from "$app/navigation";
 
 let { data }: PageProps = $props();
 //let emailEditorRef = $state<EditorRef>()
@@ -85,6 +86,9 @@ async function deleteTemplate() {
         window.location.href = '/dashboard';
     }
 }
+
+
+
 </script>
 
 
