@@ -3,6 +3,7 @@ import type {EditorRef, EmailEditor, EmailEditorProps } from "react-email-editor
 import EmailEdit from "$lib/EmailEdit.svelte";
 import { pb } from "$lib/pocketbase";
 import type { PageProps } from './$types';
+import { goto } from "$app/navigation";
 
 let { data }: PageProps = $props();
 //let emailEditorRef = $state<EditorRef>()
@@ -40,7 +41,6 @@ const saveDesign = () => {
             }
             screenshot = new Uint8Array(byteNumbers);
         });
-
         const data = {
             "Subject": templateSubject,
             "Updated_by": currentUser?.email,
@@ -49,6 +49,7 @@ const saveDesign = () => {
         };
         const record = await pb.collection('newsletters').update(`${templateid}`, data);
     })
+
     alert("Design saved")
 }
 const onDesignLoad = (data: any) => {
@@ -89,6 +90,9 @@ async function deleteTemplate() {
         window.location.href = '/dashboard';
     }
 }
+
+
+
 </script>
 
 
@@ -134,7 +138,7 @@ async function deleteTemplate() {
     margin-left: 10px;
     font-size: 14px;
     font-weight: bold;
-    background-color: #333; /* Changed to dark gray */
+    background-color: #333; 
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -146,7 +150,7 @@ async function deleteTemplate() {
 }
 
 .bar button:hover {
-    background-color: #555; /* Lighter gray on hover */
+    background-color: #555; 
     transform: translateY(-3px);
 }
 

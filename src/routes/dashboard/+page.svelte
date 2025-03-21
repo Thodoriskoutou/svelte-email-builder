@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { PageProps } from './$types';
 import { pb } from '$lib/pocketbase';
+  import { goto } from '$app/navigation';
 let { data }: PageProps = $props();
 
 
@@ -22,11 +23,14 @@ function logout() {
     pb.authStore.clear();
     window.location.href = '/login';
 }
-const puppeteer = require('puppeteer');
 
+$effect(()=>{
+    if(!pb.authStore.record){
+        goto("/login")
+    }
+})
 </script>
 
-{#if pb.authStore}
 <section class="welcome-message">
     <h1>Welcome to the Email Builder!</h1>
     <input 
@@ -42,6 +46,7 @@ const puppeteer = require('puppeteer');
         {#each data.posts as post}
         <a href="/dashboard/{post.id}">
             <li class="newsletter-item">
+                <img src={`http://127.0.0.1:8090/api/files/newsletters/${post.id}/${post.Preview}`} alt="preview"/>
                 <h2 class="newsletter-title">{post.Subject}</h2>
                 <p class="newsletter-date">Created on: {post.Created_at}</p>
                 <p class="newsletter-author">By: {post.Created_by}</p>
@@ -62,6 +67,20 @@ const puppeteer = require('puppeteer');
 {/if}
 <style>
 
+@keyframes bottomToTop {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+img {
+    width: 100%;
+}
 
 .welcome-message {
     background-color: #ffffff;
@@ -71,7 +90,9 @@ const puppeteer = require('puppeteer');
     text-align: center;
     margin: 40px auto;
     max-width: 600px;
+    animation: bottomToTop 0.6s ease-out;
 }
+
 .logout-btn {
     background-color: #f44336;
     color: white;
@@ -89,10 +110,12 @@ const puppeteer = require('puppeteer');
     background-color: #e53935;
     transform: translateY(-3px);
 }
+
 .welcome-message h1 {
     font-size: 2.5rem;
     color: #333;
     margin-bottom: 20px;
+    animation: bottomToTop 0.6s ease-out;
 }
 
 .subject-input {
@@ -128,13 +151,16 @@ const puppeteer = require('puppeteer');
     transform: translateY(-3px);
 }
 
-/* Newsletter List Styling */
 .newsletter-list {
     list-style: none;
     padding: 0;
     margin-top: 30px;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    animation: bottomToTop 0.6s ease-out;
 }
 
 .newsletter-item {
@@ -145,6 +171,7 @@ const puppeteer = require('puppeteer');
     padding: 20px;
     transition: all 0.3s ease;
     cursor: pointer;
+    animation: bottomToTop 0.6s ease-out;
 }
 
 .newsletter-item:hover {
@@ -182,7 +209,6 @@ const puppeteer = require('puppeteer');
 .newsletter-item p {
     margin: 5px 0;
 }
-
 .placeholder {
     width: 200px;
     height: 200px;
@@ -190,6 +216,5 @@ const puppeteer = require('puppeteer');
     justify-content: center;
     align-items: center;
     background-color: #a1a1a1;
-}
-
+  }
 </style>
