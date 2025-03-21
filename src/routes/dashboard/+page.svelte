@@ -6,6 +6,10 @@ let { data }: PageProps = $props();
 
 
 let subject = $state('');
+let locale: Intl.DateTimeFormat = $state(new Intl.DateTimeFormat('en-US', {
+    dateStyle: "short",
+    timeStyle: "short",
+}));
 
 async function createTemplate() {
     const currentUser = pb.authStore.record;
@@ -15,7 +19,7 @@ async function createTemplate() {
         "Created_by": currentUser?.email,
         "Content": null
     };
-    const record = await pb.collection('newsletters').create(data);
+    await pb.collection('newsletters').create(data);
 
     location.reload();
 }
@@ -28,6 +32,10 @@ $effect(()=>{
     if(!pb.authStore.record){
         goto("/login")
     }
+    locale = new Intl.DateTimeFormat(pb.authStore.record!.locale, {
+    dateStyle: "short",
+    timeStyle: "short",
+});
 })
 </script>
 
@@ -46,17 +54,18 @@ $effect(()=>{
         {#each data.posts as post}
         <a href="/dashboard/{post.id}">
             <li class="newsletter-item">
-                <img src={`http://127.0.0.1:8090/api/files/newsletters/${post.id}/${post.Preview}`} alt="preview"/>
-                <h2 class="newsletter-title">{post.Subject}</h2>
-                <p class="newsletter-date">Created on: {post.Created_at}</p>
-                <p class="newsletter-author">By: {post.Created_by}</p>
-                <p class="newsletter-author">Updated By: {post.Updated_by}</p>
-                <p class="newsletter-author">Updated At: {post.Updated_at}</p>
                 {#if post.Preview}
                     {@const src = pb.files.getURL(post, post.Preview, {'thumb': '200x200t'})}
                     <img {src} alt="{post.Subject}" />
                 {:else}
                     <div class="placeholder">Unsaved</div>
+                {/if}
+                <h2 class="newsletter-title">{post.Subject}</h2>
+                <p class="newsletter-date">Created At: {locale.format(new Date(Date.UTC(...post.Created_at.split(/-|\s|:|\.|Z/g).slice(0,7).map((a, i) => (i===1)? parseInt(a)-1 : parseInt(a)))))}</p>
+                <p class="newsletter-author">Created By: {post.Created_by}</p>
+                {#if post.Updated_at}
+                <p class="newsletter-author">Updated By: {post.Updated_by}</p>
+                <p class="newsletter-author">Updated At: {locale.format(new Date(Date.UTC(...post.Updated_at.split(/-|\s|:|\.|Z/g).slice(0,7).map((a, i) => (i===1)? parseInt(a)-1 : parseInt(a)))))}</p>
                 {/if}
             </li>
         </a>
@@ -66,155 +75,188 @@ $effect(()=>{
     <p>No newsletters available.</p>
 {/if}
 <style>
-
-@keyframes bottomToTop {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
+    /* Base styles */
+    .welcome-message {
+        background-color: #f5fff5;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        animation: fadeIn 0.8s ease-out;
     }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
+
+    h1 {
+        color: #2e7d32;
+        margin-bottom: 1.5rem;
+        font-size: 2.5rem;
+        animation: slideInFromLeft 0.8s ease-out;
     }
-}
 
-img {
-    width: 100%;
-}
+    .subject-input {
+        width: 100%;
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+        border: 2px solid #c8e6c9;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
 
-.welcome-message {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    margin: 40px auto;
-    max-width: 600px;
-    animation: bottomToTop 0.6s ease-out;
-}
+    .subject-input:focus {
+        outline: none;
+        border-color: #66bb6a;
+        box-shadow: 0 0 0 2px #a5d6a7;
+    }
 
-.logout-btn {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    font-size: 1.1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: all 0.3s ease;
-    width: 100%;
-}
+    button {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
 
-.logout-btn:hover {
-    background-color: #e53935;
-    transform: translateY(-3px);
-}
+    .create-template-btn {
+        background-color: #66bb6a;
+        color: white;
+        margin-right: 1rem;
+        animation: bounceIn 0.8s ease-out;
+    }
 
-.welcome-message h1 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 20px;
-    animation: bottomToTop 0.6s ease-out;
-}
+    .create-template-btn:hover {
+        background-color: #4caf50;
+        transform: scale(1.05);
+    }
 
-.subject-input {
-    width: 100%;
-    padding: 12px 20px;
-    margin-top: 15px;
-    font-size: 1rem;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    transition: border-color 0.3s;
-}
+    .logout-btn {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+        animation: bounceIn 0.8s ease-out 0.2s;
+    }
 
-.subject-input:focus {
-    border-color: #4CAF50;
-    outline: none;
-}
+    .logout-btn:hover {
+        background-color: #c8e6c9;
+        transform: scale(1.05);
+    }
 
-.create-template-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    font-size: 1.1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: all 0.3s ease;
-    width: 100%;
-}
+    .newsletter-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 0;
+    }
 
-.create-template-btn:hover {
-    background-color: #45a049;
-    transform: translateY(-3px);
-}
+    .newsletter-item {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        list-style: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #e0f2e9;
+        animation: fadeInUp 0.6s ease-out;
+    }
 
-.newsletter-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    animation: bottomToTop 0.6s ease-out;
-}
+    .newsletter-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
 
-.newsletter-item {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    padding: 20px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    animation: bottomToTop 0.6s ease-out;
-}
+    .newsletter-title {
+        color: #1b5e20;
+        margin: 1rem 0;
+        font-size: 1.2rem;
+    }
 
-.newsletter-item:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px);
-}
+    .newsletter-date, .newsletter-author {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0.3rem 0;
+    }
 
-.newsletter-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
-    transition: color 0.3s ease;
-}
+    img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        animation: scaleIn 0.6s ease-out;
+    }
 
-.newsletter-title:hover {
-    color: #4CAF50;
-}
+    .placeholder {
+        background-color: #e8f5e9;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #66bb6a;
+        font-weight: bold;
+        border-radius: 5px;
+        animation: fadeIn 0.8s ease-out;
+    }
 
-.newsletter-date,
-.newsletter-author {
-    font-size: 0.9rem;
-    color: #777;
-    margin: 5px 0;
-}
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
 
-.newsletter-date {
-    font-style: italic;
-}
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
 
-.newsletter-author {
-    font-weight: normal;
-}
+    @keyframes slideInFromLeft {
+        from {
+            transform: translateX(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
 
-.newsletter-item p {
-    margin: 5px 0;
-}
-.placeholder {
-    width: 200px;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #a1a1a1;
-  }
+    @keyframes bounceIn {
+        0% {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes scaleIn {
+        from {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+
 </style>

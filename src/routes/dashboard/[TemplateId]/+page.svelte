@@ -24,7 +24,6 @@ const exportHtml = () => {
 const currentUser = pb.authStore.record;
 const saveDesign = () => {
     editor.saveDesign(async (design) => {
-        let screenshot: Uint8Array;
         editor.exportHtml(async (data) => {
             const { design, html } = data;
             const ssRes = await fetch('/preview', {
@@ -35,19 +34,22 @@ const saveDesign = () => {
 			    }
             });
             const screenshotBase64 = await ssRes.text();
-            const byteNumbers = new Array(screenshotBase64.length);
-            for (let i = 0; i < screenshotBase64.length; i++) {
-                byteNumbers[i] = screenshotBase64.charCodeAt(i);
+            const byteCharacters = atob(screenshotBase64);
+            const byteArrays = [];
+            for (let offset = 0; offset < byteCharacters.length; offset++) {
+                byteArrays.push(byteCharacters.charCodeAt(offset));
             }
-            screenshot = new Uint8Array(byteNumbers);
+
+            const byteArray = new Uint8Array(byteArrays);
+            const screenshot = new Blob([byteArray], { type: 'image/png' });
+            const record = {
+                "Subject": templateSubject,
+                "Updated_by": currentUser?.email,
+                "Content": design,
+                "Preview": new File([screenshot], 'screenshot.png', { type: 'image/png' })
+            };
+            await pb.collection('newsletters').update(`${templateid}`, record);
         });
-        const data = {
-            "Subject": templateSubject,
-            "Updated_by": currentUser?.email,
-            "Content": design,
-            "Preview": new File([screenshot!], 'screenshot.png')
-        };
-        const record = await pb.collection('newsletters').update(`${templateid}`, data);
     })
 
     alert("Design saved")
