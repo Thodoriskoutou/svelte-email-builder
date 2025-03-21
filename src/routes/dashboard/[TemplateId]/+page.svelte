@@ -3,7 +3,7 @@ import type {EditorRef, EmailEditor, EmailEditorProps } from "react-email-editor
 import EmailEdit from "$lib/EmailEdit.svelte";
 import { pb } from "$lib/pocketbase";
 import type { PageProps } from './$types';
-  import { goto } from "$app/navigation";
+import { goto } from "$app/navigation";
 
 let { data }: PageProps = $props();
 //let emailEditorRef = $state<EditorRef>()
@@ -24,24 +24,28 @@ const exportHtml = () => {
 const currentUser = pb.authStore.record;
 const saveDesign = () => {
     editor.saveDesign(async (design) => {
-        try{
-            const response = await fetch(`/dashboard/${templateid}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        currentUrl: window.location.href,
-                        TemplateId: templateid
-                    })
-                });
-                const result = await response.json();
-
-        }catch(err){
-            console.log(err)
-        }
+        let screenshot: Uint8Array;
+        editor.exportHtml(async (data) => {
+            const { design, html } = data;
+            const ssRes = await fetch('/preview', {
+                method: "POST",
+                body: html,
+                headers: {
+				    'content-type': 'text/html'
+			    }
+            });
+            const screenshotBase64 = await ssRes.text();
+            const byteNumbers = new Array(screenshotBase64.length);
+            for (let i = 0; i < screenshotBase64.length; i++) {
+                byteNumbers[i] = screenshotBase64.charCodeAt(i);
+            }
+            screenshot = new Uint8Array(byteNumbers);
+        });
         const data = {
             "Subject": templateSubject,
             "Updated_by": currentUser?.email,
-            "Content": design
+            "Content": design,
+            "Preview": new File([screenshot!], 'screenshot.png')
         };
         const record = await pb.collection('newsletters').update(`${templateid}`, data);
     })

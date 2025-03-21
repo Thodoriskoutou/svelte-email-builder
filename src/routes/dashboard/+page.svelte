@@ -52,6 +52,12 @@ $effect(()=>{
                 <p class="newsletter-author">By: {post.Created_by}</p>
                 <p class="newsletter-author">Updated By: {post.Updated_by}</p>
                 <p class="newsletter-author">Updated At: {post.Updated_at}</p>
+                {#if post.Preview}
+                    {@const src = pb.files.getURL(post, post.Preview, {'thumb': '200x200t'})}
+                    <img {src} alt="{post.Subject}" />
+                {:else}
+                    <div class="placeholder">Unsaved</div>
+                {/if}
             </li>
         </a>
         {/each}
@@ -203,4 +209,12 @@ img {
 .newsletter-item p {
     margin: 5px 0;
 }
+.placeholder {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #a1a1a1;
+  }
 </style>
