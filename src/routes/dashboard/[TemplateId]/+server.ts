@@ -12,27 +12,19 @@ export const POST: RequestHandler = async ({ request }) => {
         try {
             const page = await browser.newPage();
             await page.setViewport({ width: 1340, height: 836, deviceScaleFactor: 1 });
-            
-
             await page.goto(currentUrl, {
                 waitUntil: 'networkidle0',
                 timeout: 30000
             });
-
             const screenshotBuffer = await page.screenshot({
                 type: 'png',
                 fullPage: false,
                 encoding: 'binary'
             });
-            
- 
             const formData = new FormData();
             const blob = new Blob([screenshotBuffer], { type: 'image/png' });
             formData.append('Preview', blob, 'preview.png');
-
-
             const updatedRecord = await pb.collection('newsletters').update(TemplateId, formData);
-
             return json({ 
                 success: true, 
                 id: TemplateId

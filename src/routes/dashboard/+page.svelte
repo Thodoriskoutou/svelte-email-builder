@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { PageProps } from './$types';
 import { pb } from '$lib/pocketbase';
+  import { goto } from '$app/navigation';
 let { data }: PageProps = $props();
 
 
@@ -23,6 +24,11 @@ function logout() {
     window.location.href = '/login';
 }
 
+$effect(()=>{
+    if(!pb.authStore.record){
+        goto("/login")
+    }
+})
 </script>
 
 <section class="welcome-message">
@@ -55,9 +61,21 @@ function logout() {
 {/if}
 <style>
 
-img{
+@keyframes bottomToTop {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+img {
     width: 100%;
 }
+
 .welcome-message {
     background-color: #ffffff;
     padding: 30px;
@@ -66,7 +84,9 @@ img{
     text-align: center;
     margin: 40px auto;
     max-width: 600px;
+    animation: bottomToTop 0.6s ease-out;
 }
+
 .logout-btn {
     background-color: #f44336;
     color: white;
@@ -84,10 +104,12 @@ img{
     background-color: #e53935;
     transform: translateY(-3px);
 }
+
 .welcome-message h1 {
     font-size: 2.5rem;
     color: #333;
     margin-bottom: 20px;
+    animation: bottomToTop 0.6s ease-out;
 }
 
 .subject-input {
@@ -123,17 +145,18 @@ img{
     transform: translateY(-3px);
 }
 
-/* Newsletter List Styling */
 .newsletter-list {
     list-style: none;
     padding: 0;
     margin-top: 30px;
-    max-width: 1200px; 
+    max-width: 1200px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px; 
+    gap: 20px;
+    animation: bottomToTop 0.6s ease-out;
 }
+
 .newsletter-item {
     background-color: #ffffff;
     border-radius: 12px;
@@ -142,6 +165,7 @@ img{
     padding: 20px;
     transition: all 0.3s ease;
     cursor: pointer;
+    animation: bottomToTop 0.6s ease-out;
 }
 
 .newsletter-item:hover {
@@ -179,7 +203,4 @@ img{
 .newsletter-item p {
     margin: 5px 0;
 }
-
-
-
 </style>
