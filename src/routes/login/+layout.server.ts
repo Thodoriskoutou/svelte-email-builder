@@ -5,4 +5,9 @@ export const load: LayoutServerLoad = async ({ locals }) => {
     if (locals.user) {
         redirect(303, '/dashboard')
     }
+    const auth = Bun.env.OAUTH2_PROVIDER 
+
+    return {
+        auth
+    }
 }
