@@ -120,6 +120,7 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
         // designMode: 'edit', // enable for admins to lock down template sections
         editor: {
             autoSelectOnDrop: true,
+            confirmOnDelete: false
         },
         features: {
             undoRedo: true,
