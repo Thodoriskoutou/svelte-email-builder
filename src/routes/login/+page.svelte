@@ -3,8 +3,12 @@ import { applyAction, enhance } from '$app/forms'
 import { pb } from '$lib/pocketbase'
 import type { PageProps } from '../$types';
 let { data }: PageProps = $props();
-$effect(()=>{
-    console.log(data)
+
+
+$effect(async()=>{
+    if(data.auth){
+        await pb.collection('users').authWithOAuth2({ provider: data.auth });
+    }
 })
 
 </script>
@@ -108,7 +112,7 @@ $effect(()=>{
     transform: scale(0.95);
     box-shadow: rgba(144, 211, 144, 0.8) 0px 15px 10px -10px;
 }
-
+/* 
 .social-account-container {
     margin-top: 25px;
 }
@@ -146,7 +150,7 @@ $effect(()=>{
 
 .social-account-container .social-accounts .social-button:active {
     transform: scale(0.9);
-}
+} */
 
 .agreement {
     display: block;
