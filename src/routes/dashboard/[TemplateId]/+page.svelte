@@ -9,6 +9,7 @@ let { data }: PageProps = $props()
 //let emailEditorRef = $state<EditorRef>()
 let editor: any
 let autosave: Timer
+let lastSave = new Date()
 
 $effect(() => {
     return () => {
@@ -31,17 +32,12 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
         if(data.autosave > 0) {
             autosave = setInterval(function(){
                 // @ts-expect-error
-                document.querySelector('form#save').submit()
+                document.querySelector('form#save button').click()
             }, data.autosave * 1000)
         } else {
-            let lastAutoSave = new Date()
             unlayer.addEventListener('design:updated', function () {
-                const now = new Date()
-                if(now.getTime() - lastAutoSave.getTime() > 5000) { // 5 seconds minimum
-                    lastAutoSave = now
-                    // @ts-expect-error
-                    document.querySelector('form#save').submit()
-                }
+                // @ts-expect-error
+                document.querySelector('form#save button').click()
             })
         }
     }
@@ -93,7 +89,13 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
                 <button>Delete template</button>
             </form>
             <button onclick={copyHtml}>Copy HTML</button>
-            <form id="save" method="POST" action="?/save" use:enhance={async ({ formData }) => {
+            <form id="save" method="POST" action="?/save" use:enhance={async ({ formData, cancel }) => {
+                if(data.autosave !== null) {
+                    const now = new Date()
+                    if(now.getTime() - lastSave.getTime() < 2000) { // 2 seconds minimum
+                        cancel()
+                    }
+                }
                 await new Promise<void>((resolve) => {
                     editor.exportHtml((exportData) => {
                         formData.set("content", JSON.stringify(exportData.design))
@@ -101,6 +103,7 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
                         resolve() // Ensures `enhance` waits for exportHtml to finish
                     })
                 })
+                lastSave = new Date()
             }}>
                 <input type="hidden" name="templateId" value={data.template.id} />
                 <button>Save Design</button>      
