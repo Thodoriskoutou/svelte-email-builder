@@ -1,7 +1,7 @@
 import type { Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
-import { error, json } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
 import puppeteer from 'puppeteer'
 
 export const load:PageServerLoad  =  async ({ params, locals }) => {
@@ -10,6 +10,7 @@ export const load:PageServerLoad  =  async ({ params, locals }) => {
         const record = await locals.pb.collection('newsletters').getOne(`${TemplateId}`)
         return {
             template: record,
+            autosave: Bun.env.AUTOSAVE_INTERVAL ? parseInt(Bun.env.AUTOSAVE_INTERVAL) : null
         }
     } catch (err) {
         error(500, `Failed to fetch data from Pocketbase: ${err.message}`)

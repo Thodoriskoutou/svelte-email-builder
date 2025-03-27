@@ -7,7 +7,14 @@ import { goto } from '$app/navigation'
 
 let { data }: PageProps = $props()
 //let emailEditorRef = $state<EditorRef>()
-let editor:any
+let editor: any
+let autosave: Timer
+
+$effect(() => {
+    return () => {
+        if(data.autosave !== null && data.autosave > 0) clearInterval(autosave);
+    }
+})
 
 const copyHtml = () => {
     editor.exportHtml((exportData) => {
@@ -17,16 +24,27 @@ const copyHtml = () => {
     })
 }
 
-const onDesignLoad = (data: any) => {
-    console.log('onDesignLoad', data);
-};
 const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
-    
-    console.log('onLoad', unlayer);
     editor = unlayer;
-    unlayer.addEventListener('design:loaded', onDesignLoad);
-    unlayer.loadDesign(data.template?.Content);
-    
+    unlayer.loadDesign(data.template?.Content)
+    if(data.autosave !== null) {
+        if(data.autosave > 0) {
+            autosave = setInterval(function(){
+                // @ts-expect-error
+                document.querySelector('form#save').submit()
+            }, data.autosave * 1000)
+        } else {
+            let lastAutoSave = new Date()
+            unlayer.addEventListener('design:updated', function () {
+                const now = new Date()
+                if(now.getTime() - lastAutoSave.getTime() > 5000) { // 5 seconds minimum
+                    lastAutoSave = now
+                    // @ts-expect-error
+                    document.querySelector('form#save').submit()
+                }
+            })
+        }
+    }
     unlayer?.registerCallback("image", async function (file , done) {
         done({ progress: 0 })
 
@@ -75,7 +93,7 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
                 <button>Delete template</button>
             </form>
             <button onclick={copyHtml}>Copy HTML</button>
-            <form method="POST" action="?/save" use:enhance={async ({ formData }) => {
+            <form id="save" method="POST" action="?/save" use:enhance={async ({ formData }) => {
                 await new Promise<void>((resolve) => {
                     editor.exportHtml((exportData) => {
                         formData.set("content", JSON.stringify(exportData.design))
@@ -88,6 +106,7 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
                 <button>Save Design</button>      
             </form>
         </div>
+        <h1>{data.template.Subject}</h1>
         <div>
             <button onclick={() => editor.undo()}>Undo</button>
             <button onclick={() => editor.redo()}>Redo</button>
@@ -96,15 +115,19 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
     <EmailEdit onLoad={onLoad} options={{
         version: '1.157.0',
         // designMode: 'edit', // enable for admins to lock down template sections
-        appearance: {
-            theme: "modern_light"
-        },
         editor: {
             autoSelectOnDrop: true,
         },
         features: {
             undoRedo: true,
+            textEditor: {
+                spellChecker: false,
+                tables: true,
+                cleanPaste: true
+            }
         },
+        devices: ['desktop', 'tablet', 'mobile'],
+        displayMode: "email",
         env: {
             API_V1_BASE_URL: "http://127.0.0.1",
             API_V2_BASE_URL: "http://127.0.0.1",
@@ -115,7 +138,6 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
         }
     }}/>
 </div>
-
 
 <style>
 .Container {
