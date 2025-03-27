@@ -91,6 +91,14 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
         version: '1.157.0',
         appearance: {
             theme: "modern_light"
+        },
+        env: {
+            API_V1_BASE_URL: "http://127.0.0.1",
+            API_V2_BASE_URL: "http://127.0.0.1",
+            EVENTS_API_BASE_URL: "http://127.0.0.1",
+            TOOLS_API_V1_BASE_URL: "http://127.0.0.1",
+            TOOLS_CDN_BASE_URL: "http://127.0.0.1",
+            CONSOLE_BASE_URL: "http://127.0.0.1"
         }
     }}/>
 </div>
