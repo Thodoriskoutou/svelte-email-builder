@@ -1,59 +1,22 @@
 <script lang="ts">
-import type {EditorRef, EmailEditor, EmailEditorProps } from "react-email-editor";
-import EmailEdit from "$lib/EmailEdit.svelte";
-import { pb } from "$lib/pocketbase";
-import type { PageProps } from './$types';
-import { goto } from "$app/navigation";
+import type {EditorRef, EmailEditor, EmailEditorProps } from "react-email-editor"
+import EmailEdit from "$lib/EmailEdit.svelte"
+import type { PageProps } from './$types'
+import { enhance, applyAction } from '$app/forms'
+import { goto } from '$app/navigation'
 
-let { data }: PageProps = $props();
+let { data }: PageProps = $props()
 //let emailEditorRef = $state<EditorRef>()
 let editor:any
-let templateid = data.posts?.id;
-let templateSubject = data.posts?.Subject
 
-const exportHtml = () => {
-    editor.exportHtml((data) => {
-        const { design, html } = data;
-        console.log('exportHtml', html);
+const copyHtml = () => {
+    editor.exportHtml((exportData) => {
+        const { html } = exportData
         navigator.clipboard.writeText(html)
-        alert('Output HTML has been logged in your developer console.');
-
         // https://docs.unlayer.com/builder/export-html#inline-styles
-    });
-};
-const currentUser = pb.authStore.record;
-const saveDesign = () => {
-    editor.saveDesign(async (design) => {
-        editor.exportHtml(async (data) => {
-            const { design, html } = data;
-            const ssRes = await fetch('/preview', {
-                method: "POST",
-                body: html,
-                headers: {
-				    'content-type': 'text/html'
-			    }
-            });
-            const screenshotBase64 = await ssRes.text();
-            const byteCharacters = atob(screenshotBase64);
-            const byteArrays = [];
-            for (let offset = 0; offset < byteCharacters.length; offset++) {
-                byteArrays.push(byteCharacters.charCodeAt(offset));
-            }
-
-            const byteArray = new Uint8Array(byteArrays);
-            const screenshot = new Blob([byteArray], { type: 'image/png' });
-            const record = {
-                "Subject": templateSubject,
-                "Updated_by": currentUser?.email,
-                "Content": design,
-                "Preview": new File([screenshot], 'screenshot.png', { type: 'image/png' })
-            };
-            await pb.collection('newsletters').update(`${templateid}`, record);
-        });
     })
-
-    alert("Design saved")
 }
+
 const onDesignLoad = (data: any) => {
     console.log('onDesignLoad', data);
 };
@@ -62,50 +25,69 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
     console.log('onLoad', unlayer);
     editor = unlayer;
     unlayer.addEventListener('design:loaded', onDesignLoad);
-    unlayer.loadDesign(data.posts?.Content);
+    unlayer.loadDesign(data.template?.Content);
     
     unlayer?.registerCallback("image", async function (file , done) {
-        done({ progress: 0})
-        console.log(file)
+        done({ progress: 0 })
 
-        pb.collection('newsletters').update(templateid, {
-            "Images+": file.attachments[0]
-        })
-        .then((updatedRecord) => {
-            const images = updatedRecord.Images;
-            const newImage = images[images.length - 1];
-            const imageUrl = `http://127.0.0.1:8090/api/files/newsletters/${templateid}/${newImage}`
-            done({ progress: 100, url: imageUrl });
-        })
-        
+        const formData = new FormData()
+        formData.set('templateId', data.template.id)
+        formData.set('file', file.attachments[0])
 
+        const res = await fetch('?/addImage', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'x-sveltekit-action': 'true'
+            }
+        })
+
+        if(res.status === 200) {
+            const response = await res.json()
+            const imageFileName = JSON.parse(response.data).pop()
+            done({ progress: 100, url: `${data.pb_url}/api/files/newsletters/${data.template.id}/${imageFileName}` })
+        } else {
+            alert(`Image ${file.attachments[0].name} could not be uploaded`)
+        }
     })
-};
-
-const onReady: EmailEditorProps['onReady'] = async (unlayer) => {
-    console.log('onReady', unlayer);
-};
-async function deleteTemplate() {
-    let confirmed = window.confirm("Are you sure you want to delete this template?")
-    if (confirmed) {
-        await pb.collection('newsletters').delete(data.posts?.id);
-        window.location.href = '/dashboard';
-    }
 }
-
-
-
 </script>
-
 
 <div class="Container">
     <div class="bar">
-        <button onclick={exportHtml} >Copy HTML</button>
-        <button onclick={saveDesign} >Save Design</button>
         <a href="/dashboard"><button>Back</button></a>
-        <button onclick={deleteTemplate} >Delete template</button>
+        <form method="POST" action="?/delete" use:enhance={({ cancel }) => {
+            const confirmed = window.confirm("Are you sure you want to delete this template?")
+            if (!confirmed) {
+                cancel()
+            }
+            return async ({ result }) => {
+                if (result.type === 'redirect') {
+                    goto(result.location)
+                } else {
+                    await applyAction(result)
+                }
+            }
+        }}
+        >
+            <input type="hidden" name="templateId" value={data.template.id} />
+            <button>Delete template</button>
+        </form>
+        <button onclick={copyHtml}>Copy HTML</button>
+        <form method="POST" action="?/save" use:enhance={async ({ formData }) => {
+            await new Promise<void>((resolve) => {
+                editor.exportHtml((exportData) => {
+                    formData.set("content", JSON.stringify(exportData.design))
+                    formData.set("html", exportData.html)
+                    resolve() // Ensures `enhance` waits for exportHtml to finish
+                })
+            })
+        }}>
+            <input type="hidden" name="templateId" value={data.template.id} />
+            <button>Save Design</button>        
+        </form>
     </div>
-    <EmailEdit onReady={onReady} onLoad={onLoad} options={{
+    <EmailEdit onLoad={onLoad} options={{
         version: '1.157.0',
         appearance: {
             theme: "modern_light"

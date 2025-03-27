@@ -1,16 +1,17 @@
 <script lang="ts">
 import { applyAction, enhance } from '$app/forms'
-import { pb } from '$lib/pocketbase'
-import type { PageProps } from '../$types';
-let { data }: PageProps = $props();
+import type { PageProps } from '../$types'
+import PocketBase from 'pocketbase'
 
+let { data }: PageProps = $props()
+
+const pb = new PocketBase(data.pb_url)
 
 $effect(async()=>{
     if(data.auth){
         await pb.collection('users').authWithOAuth2({ provider: data.auth });
     }
 })
-
 </script>
 
 <div class="wrapper">
@@ -23,14 +24,12 @@ $effect(async()=>{
                 pb.authStore.loadFromCookie(document.cookie)
                 await applyAction(result)
             }
-            }}>
-
+        }}
+        >
             <input required class="input" type="email" name="email" id="email" placeholder="E-mail" >
             <input required class="input" type="password" name="password" id="password" placeholder="Password" > 
             <input class="login-button" type="submit" value="Sign In">
         </form>
-    
-        <span class="agreement"><a href="www.spinworks.gr">Powered by Spinworks</a></span>
     </div>
 </div>
 
@@ -112,56 +111,4 @@ $effect(async()=>{
     transform: scale(0.95);
     box-shadow: rgba(144, 211, 144, 0.8) 0px 15px 10px -10px;
 }
-/* 
-.social-account-container {
-    margin-top: 25px;
-}
-
-.social-account-container .title {
-    display: block;
-    text-align: center;
-    font-size: 10px;
-    color: rgb(102, 153, 102); 
-}
-
-.social-account-container .social-accounts {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 5px;
-}
-
-.social-account-container .social-accounts .social-button {
-
-    padding: 5px;
-    border-radius: 50%;
-    width: 40px;
-    aspect-ratio: 1;
-    display: grid;
-    place-content: center;
-
-    transition: all 0.2s ease-in-out;
-}
-
-.social-account-container .social-accounts .social-button:hover {
-    transform: scale(1.2);
-}
-
-.social-account-container .social-accounts .social-button:active {
-    transform: scale(0.9);
-} */
-
-.agreement {
-    display: block;
-    text-align: center;
-    margin-top: 15px;
-}
-
-.agreement a {
-    text-decoration: none;
-    color: #32CD32; 
-    font-size: 9px;
-}
-
 </style>

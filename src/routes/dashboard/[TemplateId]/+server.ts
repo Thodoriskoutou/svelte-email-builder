@@ -1,8 +1,7 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import puppeteer from 'puppeteer';
-import { pb } from '$lib/pocketbase';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
     try {
         const { currentUrl, TemplateId } = await request.json();
 
@@ -24,7 +23,7 @@ export const POST: RequestHandler = async ({ request }) => {
             const formData = new FormData();
             const blob = new Blob([screenshotBuffer], { type: 'image/png' });
             formData.append('Preview', blob, 'preview.png');
-            const updatedRecord = await pb.collection('newsletters').update(TemplateId, formData);
+            await locals.pb.collection('newsletters').update(TemplateId, formData);
             return json({ 
                 success: true, 
                 id: TemplateId
