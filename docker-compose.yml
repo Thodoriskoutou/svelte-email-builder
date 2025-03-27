@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  pocketbase:
+    image: spectado/pocketbase:latest
+    container_name: pocketbase
+    ports:
+      - "3416:80"
+    restart: unless-stopped
+    volumes:
+      - data:/pb_data
+      - public:/pb_public
+      - migrations:/pb_migrations
+
+  email-builder:
+    build:
+    container_name: email-builder
+    depends_on:
+      - pocketbase
+    ports:
+      - "3417:3000"
+    restart: unless-stopped
+    environment:
+      - POCKETBASE_URL=http://pocketbase # replace with an FQDN via an SSL enabled reverse proxy for oAuth2 to work
+      # - OAUTH2_PROVIDER=github
+
+volumes:
+  data:
+  public:
+  migrations:

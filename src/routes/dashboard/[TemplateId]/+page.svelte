@@ -55,42 +55,55 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
 
 <div class="Container">
     <div class="bar">
-        <a href="/dashboard"><button>Back</button></a>
-        <form method="POST" action="?/delete" use:enhance={({ cancel }) => {
-            const confirmed = window.confirm("Are you sure you want to delete this template?")
-            if (!confirmed) {
-                cancel()
-            }
-            return async ({ result }) => {
-                if (result.type === 'redirect') {
-                    goto(result.location)
-                } else {
-                    await applyAction(result)
+        <div>
+            <a href="/dashboard"><button>Back</button></a>
+            <form method="POST" action="?/delete" use:enhance={({ cancel }) => {
+                const confirmed = window.confirm("Are you sure you want to delete this template?")
+                if (!confirmed) {
+                    cancel()
                 }
-            }
-        }}
-        >
-            <input type="hidden" name="templateId" value={data.template.id} />
-            <button>Delete template</button>
-        </form>
-        <button onclick={copyHtml}>Copy HTML</button>
-        <form method="POST" action="?/save" use:enhance={async ({ formData }) => {
-            await new Promise<void>((resolve) => {
-                editor.exportHtml((exportData) => {
-                    formData.set("content", JSON.stringify(exportData.design))
-                    formData.set("html", exportData.html)
-                    resolve() // Ensures `enhance` waits for exportHtml to finish
+                return async ({ result }) => {
+                    if (result.type === 'redirect') {
+                        goto(result.location)
+                    } else {
+                        await applyAction(result)
+                    }
+                }
+            }}
+            >
+                <input type="hidden" name="templateId" value={data.template.id} />
+                <button>Delete template</button>
+            </form>
+            <button onclick={copyHtml}>Copy HTML</button>
+            <form method="POST" action="?/save" use:enhance={async ({ formData }) => {
+                await new Promise<void>((resolve) => {
+                    editor.exportHtml((exportData) => {
+                        formData.set("content", JSON.stringify(exportData.design))
+                        formData.set("html", exportData.html)
+                        resolve() // Ensures `enhance` waits for exportHtml to finish
+                    })
                 })
-            })
-        }}>
-            <input type="hidden" name="templateId" value={data.template.id} />
-            <button>Save Design</button>        
-        </form>
+            }}>
+                <input type="hidden" name="templateId" value={data.template.id} />
+                <button>Save Design</button>      
+            </form>
+        </div>
+        <div>
+            <button onclick={() => editor.undo()}>Undo</button>
+            <button onclick={() => editor.redo()}>Redo</button>
+        </div>
     </div>
     <EmailEdit onLoad={onLoad} options={{
         version: '1.157.0',
+        // designMode: 'edit', // enable for admins to lock down template sections
         appearance: {
             theme: "modern_light"
+        },
+        editor: {
+            autoSelectOnDrop: true,
+        },
+        features: {
+            undoRedo: true,
         },
         env: {
             API_V1_BASE_URL: "http://127.0.0.1",
@@ -104,7 +117,8 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
 </div>
 
 
-<style>.Container {
+<style>
+.Container {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -114,20 +128,25 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
 
 .bar {
     flex: 0 1 60px;
-    background-color: #4CAF50; 
+    background-color: #4CAF50;
     color: #fff; 
     padding: 10px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+}
+
+.bar > div {
+    display: flex;
+    align-items: center;
     box-sizing: border-box;
     max-height: 60px;
-    border-bottom: 1px solid #ccc;
+    gap: 10px;
 }
 
 .bar button {
     padding: 10px 20px;
-    margin-left: 10px;
     font-size: 14px;
     font-weight: bold;
     background-color: #333; 
@@ -150,5 +169,4 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.7);
 }
-
 </style>
