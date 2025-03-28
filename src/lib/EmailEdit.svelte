@@ -1,7 +1,7 @@
 <script lang="ts">
 import { createElement } from "react";
 import { createRoot } from 'react-dom/client'
-import { EmailEditor, type EmailEditorProps } from "react-email-editor";
+import { type EmailEditorProps } from "react-email-editor";
 
 
 let rootEl: HTMLElement

@@ -8,16 +8,14 @@ export const actions: Actions = {
             password: string
         }
 
-    try {
-        await locals.pb
-        .collection('users')
-        .authWithPassword(data.email, data.password)
-        
-    } catch (e) {
-        console.error(e)
-        throw e
-    }
-
+        try {
+            await locals.pb
+            .collection('users')
+            .authWithPassword(data.email, data.password)
+        } catch (e) {
+            console.error(e)
+            throw e
+        }
         redirect(303, '/dashboard')
     },
 }
