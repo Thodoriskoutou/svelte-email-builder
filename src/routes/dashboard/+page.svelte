@@ -2,7 +2,7 @@
 import type { PageProps } from './$types'
 import { enhance, applyAction } from '$app/forms'
 import { goto } from '$app/navigation'
-
+import Icon from "@iconify/svelte/dist/Icon.svelte";
 let { data }: PageProps = $props()
 
 let locale: Intl.DateTimeFormat = $state(new Intl.DateTimeFormat('en-US', {
@@ -37,7 +37,7 @@ $effect(()=>{
                 class="subject-input"
                 required
             />
-            <button class="create-template-btn">Create Template</button>
+            <button class="create-template-btn"><span class="create">Create Template<Icon icon="material-symbols:add"/></span></button>
         </form>
         <form method="POST" action="?/logout" use:enhance={() => {
             return async ({ result }) => {
@@ -48,7 +48,7 @@ $effect(()=>{
                 }
             }
         }}>
-            <button class="logout-btn">Logout</button>
+            <button class="logout-btn"><span class="create">Logout<Icon icon="material-symbols:logout"/></span></button>
         </form>
     </div>
 </section>
@@ -96,7 +96,11 @@ h1 {
     gap: 1rem;
     align-items: center;
 }
-
+.create{
+    display: flex;
+    gap: 0.2rem;
+    align-items: center;
+}
 .subject-input {
     padding: 0.8rem;
     border: 2px solid #c8e6c9;
