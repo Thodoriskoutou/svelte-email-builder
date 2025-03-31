@@ -45,17 +45,6 @@ export const actions = {
 
         return { success: true }
 	},
-    delete: async ({ request, locals }) => {
-		const data = await request.formData()
-        const templateId = data.get('templateId')
-        if(templateId && templateId.length) {
-            await locals.pb.collection('newsletters').delete(templateId)
-
-            return redirect(302, '/dashboard')
-        } else {
-            return fail(400, { templateId, invalid: true })
-        }
-	},
     addImage: async ({ request, locals }) => {
 		const data = await request.formData()
         const templateId = data.get('templateId')

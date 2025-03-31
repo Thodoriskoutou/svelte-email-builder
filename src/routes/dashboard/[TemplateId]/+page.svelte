@@ -7,7 +7,6 @@ import { enhance, applyAction } from '$app/forms'
 import { goto } from '$app/navigation'
 
 let { data }: PageProps = $props()
-//let emailEditorRef = $state<EditorRef>()
 let editor: any
 let autosave: Timer
 let lastSave = new Date()
@@ -22,7 +21,6 @@ const copyHtml = () => {
     editor.exportHtml((exportData) => {
         const { html } = exportData
         navigator.clipboard.writeText(html)
-        // https://docs.unlayer.com/builder/export-html#inline-styles
     })
 }
 
@@ -32,12 +30,10 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
     if(data.autosave !== null) {
         if(data.autosave > 0) {
             autosave = setInterval(function(){
-                // @ts-expect-error
                 document.querySelector('form#save button').click()
             }, data.autosave * 1000)
         } else {
             unlayer.addEventListener('design:updated', function () {
-                // @ts-expect-error
                 document.querySelector('form#save button').click()
             })
         }
@@ -68,25 +64,8 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
 <div class="Container">
     <div class="bar">
         <div>
-            <a href="/dashboard"><button><Icon icon="material-symbols:keyboard-return-rounded"/>Back</button></a>
-            <form method="POST" action="?/delete" use:enhance={({ cancel }) => {
-                const confirmed = window.confirm("Are you sure you want to delete this template?")
-                if (!confirmed) {
-                    cancel()
-                }
-                return async ({ result }) => {
-                    if (result.type === 'redirect') {
-                        goto(result.location)
-                    } else {
-                        await applyAction(result)
-                    }
-                }
-            }}
-            >
-                <input type="hidden" name="templateId" value={data.template.id} />
-                <button><Icon icon="material-symbols:delete-outline-rounded"/>Delete template</button>
-            </form>
-            <button onclick={copyHtml}><Icon icon="material-symbols:content-copy-outline-rounded"/>Copy HTML</button>
+            <a href="/dashboard"><button class="back-button"><Icon icon="material-symbols:keyboard-return-rounded"/>Back</button></a>
+            <button class="copy-html-button" onclick={copyHtml}><Icon icon="material-symbols:content-copy-outline-rounded"/>Copy HTML</button>
             <form id="save" method="POST" action="?/save" use:enhance={async ({ formData, cancel }) => {
                 if(data.autosave !== null) {
                     const now = new Date()
@@ -104,18 +83,18 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
                 lastSave = new Date()
             }}>
                 <input type="hidden" name="templateId" value={data.template.id} />
-                <button><Icon icon="material-symbols:save-rounded"/>Save Design</button>      
+                <button class="save-button"><Icon icon="material-symbols:save-rounded"/>Save Design</button>      
             </form>
         </div>
         <h1>{data.template.Subject}</h1>
         <div>
-            <button onclick={() => editor.undo()}><Icon icon="material-symbols:undo"/>Undo</button>
-            <button onclick={() => editor.redo()}><Icon icon="material-symbols:redo-rounded"/>Redo</button>
+            <button class="undo-button" onclick={() => editor.undo()}><Icon icon="material-symbols:undo"/>Undo</button>
+            <button class="redo-button" onclick={() => editor.redo()}><Icon icon="material-symbols:redo-rounded"/>Redo</button>
         </div>
     </div>
     <EmailEdit onLoad={onLoad} options={{
         version: '1.157.0',
-        designMode: 'edit', // enable for admins to lock down template sections
+        designMode: 'edit',
         editor: {
             autoSelectOnDrop: true,
             confirmOnDelete: false
@@ -172,8 +151,6 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
     padding: 10px 20px;
     font-size: 15px;
     font-weight: bold;
-    background-color: #6DBE45;
-    color: #f1f1f1;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -188,7 +165,6 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
 }
 
 .bar button:hover {
-    background-color: #5CA539;
     transform: translateY(-3px);
 }
 
@@ -197,5 +173,29 @@ const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
     box-shadow: 0 0 5px rgba(107, 190, 69, 0.7);
 }
 
+.back-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.copy-html-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+.save-button {
+    background-color: #6DBE45;
+    color: white;
+}
+
+.undo-button {
+    background-color: #F44336;
+    color: white;
+}
+
+.redo-button {
+    background-color: #2196F3;
+    color: white;
+}
 
 </style>
