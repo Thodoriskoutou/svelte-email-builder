@@ -3,19 +3,30 @@ import type { PageProps } from './$types'
 import { enhance, applyAction } from '$app/forms'
 import { goto } from '$app/navigation'
 import Icon from "@iconify/svelte/dist/Icon.svelte";
+import type { Editor, EmailEditorProps } from 'react-email-editor';
 let { data }: PageProps = $props()
-
+let editor: Editor
 let locale: Intl.DateTimeFormat = $state(new Intl.DateTimeFormat('en-US', {
     dateStyle: "short",
     timeStyle: "short",
 }))
+
+let renameIndex = $state(null);
+
+let deleteIndex = $state(null)
+
+function deletetemplate(templateId){
+    deleteIndex = deleteIndex === templateId ? null : templateId;
+}
 
 $effect(()=>{
     locale = new Intl.DateTimeFormat(data.user.locale, {
         dateStyle: "short",
         timeStyle: "short",
     })
+    
 })
+
 </script>
 
 <section class="welcome-message">
@@ -53,11 +64,11 @@ $effect(()=>{
     </div>
 </section>
 <ul class="newsletter-list">
-{#each data.templates as template}
-    <a href="/dashboard/{template.id}">
+{#each data.templates as template,index}
         <li class="newsletter-item">
+            <a href="/dashboard/{template.id}">
             {#if template.Preview}
-                <img src={template.thumbnail} alt="{template.Subject}" />
+                <img src={template.thumbnail} alt={template.Subject} />
             {:else}
                 <div class="placeholder">Unsaved</div>
             {/if}
@@ -65,15 +76,61 @@ $effect(()=>{
             <p class="newsletter-date">Created At: {locale.format(new Date(Date.UTC(...template.Created_at.split(/-|\s|:|\.|Z/g).slice(0,7).map((a, i) => (i===1)? parseInt(a)-1 : parseInt(a)))))}</p>
             <p class="newsletter-author">Created By: {template.Created_by}</p>
             {#if template.Updated_at}
-            <p class="newsletter-author">Updated By: {template.Updated_by}</p>
-            <p class="newsletter-author">Updated At: {locale.format(new Date(Date.UTC(...template.Updated_at.split(/-|\s|:|\.|Z/g).slice(0,7).map((a, i) => (i===1)? parseInt(a)-1 : parseInt(a)))))}</p>
+                <p class="newsletter-author">Updated By: {template.Updated_by}</p>
+                <p class="newsletter-author">Updated At: {locale.format(new Date(Date.UTC(...template.Updated_at.split(/-|\s|:|\.|Z/g).slice(0,7).map((a, i) => (i===1)? parseInt(a)-1 : parseInt(a)))))}</p>
             {/if}
+        </a>
+        <div style="display:flex">
+            <button onclick={() => renameIndex = template.id}>Rename</button>
+            <form method="POST" action="?/delete" use:enhance={({ cancel }) => {
+                const confirmed = window.confirm("Are you sure you want to delete this template?")
+                if (!confirmed) {
+                    cancel()
+                }
+                return async ({ result,update }) => {
+                    if (result.type === 'success') {
+                        await update()
+                    } else {
+                        await applyAction(result)
+                    }
+                }
+            }}
+            >
+                <button onclick={() => deletetemplate(template.id)}>Delete</button>
+                <input type="hidden" name="templateId" value={template.id} />
+            </form>
+            <form method="POST" action="?/clone" use:enhance>
+                <button>Clone</button>
+                <input type="hidden" name="templateId" value={template.id} />
+            </form>
+        </div>
+        {#if renameIndex === template.id}
+            <div>
+                <form method="POST" action="?/rename" use:enhance={() => {
+                    return async ({ result, update }) => {
+                        if (result.type === 'success') {
+                            await update()
+                        } else {
+                            await applyAction(result)
+                        }
+                        renameIndex = null
+                    }
+                }}>
+                    <input type="text" name="rename" id="rename" placeholder="Enter new name">
+                    <input type="hidden" name="templateId" value={template.id} />
+                    <button>Submit</button>
+                </form>
+            </div>
+        {/if}
         </li>
-    </a>
+
+    
 {:else}
     <li>No newsletters available.</li>
 {/each}
 </ul>
+
+
 <style>
 .welcome-message {
     background-color: #f5fff5;
