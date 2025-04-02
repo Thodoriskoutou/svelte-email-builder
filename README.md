@@ -44,7 +44,7 @@ POCKETBASE_URL=http://127.0.0.1:8090
 OAUTH2_PROVIDER=mailcow
 AUTOSAVE_INTERVAL=60
 ```
-📚 Project Overview
+# 📚 Project Overview
 This email builder was created as part of a Full Stack Internship Assignment. Key features:
 
 Drag-and-drop email template creation
@@ -64,7 +64,7 @@ Editor: React Email Editor
 
 Package Manager: Bun (Node.js compatible)
 
-🔄 Contributing
+# 🔄 Contributing
 Contributions are welcome! Please:
 
 Fork the repository
@@ -77,7 +77,7 @@ Push to the branch
 
 Open a pull request
 
-📧 Resources
+# 📧 Resources
 Unlayer React Email Editor Docs
 
 Svelte Documentation
