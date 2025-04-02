@@ -19,7 +19,18 @@ git clone https://github.com/yourusername/email-builder.git
 cd email-builder
 
 ```
-
+### Install dependencies
+```bash
+    bun install
+    # or
+    npm install
+```
+### Running the Project
+```bash
+    bun run dev
+    # or
+    npm run dev
+```
 # ⚙️ Setup
 PocketBase Configuration
 Import the pb_schema.json to your PocketBase instance
@@ -28,3 +39,8 @@ Make sure your PocketBase server is running
 
 Environment Variables
 See .env.example for required variables:
+```bash
+POCKETBASE_URL=http://127.0.0.1:8090
+OAUTH2_PROVIDER=mailcow
+AUTOSAVE_INTERVAL=60
+```
