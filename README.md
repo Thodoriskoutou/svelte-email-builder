@@ -55,7 +55,7 @@ Responsive design
 
 Type-safe development with TypeScript
 
-🛠️ Tech Stack
+# 🛠️ Tech Stack
 Frontend: Svelte 5
 
 Backend: PocketBase
