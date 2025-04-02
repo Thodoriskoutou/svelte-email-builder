@@ -1,6 +1,6 @@
 # 📧 Email Builder with Svelte 5 & PocketBase
 
-Welcome to the Email Builder project! This application lets you create and manage newsletters using Svelte 5, PocketBase, and TypeScript with the powerful Unlayer React Email Editor.
+Welcome to the Email Builder project! This application lets you create and manage newsletter designs using Svelte 5, PocketBase, and TypeScript with the powerful Unlayer React Email Editor.
 
 ![Tech Stack](https://img.shields.io/badge/Svelte-5-FF3E00?logo=svelte)
 ![PocketBase](https://img.shields.io/badge/PocketBase-DB-2C4D7E)
@@ -18,8 +18,13 @@ Welcome to the Email Builder project! This application lets you create and manag
 git clone https://github.com/yourusername/email-builder.git
 cd email-builder
 
-Install dependencies
+```
 
-bun install
-# or
-npm install
+# ⚙️ Setup
+PocketBase Configuration
+Import the pb_schema.json to your PocketBase instance
+
+Make sure your PocketBase server is running
+
+Environment Variables
+See .env.example for required variables:
