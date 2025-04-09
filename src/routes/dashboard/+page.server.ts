@@ -67,7 +67,9 @@ export const actions = {
                 const url = locals.pb.files.getURL(original, img)
                 images.push(await downloadFile(url, img))
             })
-            const preview = await downloadFile(locals.pb.files.getURL(original, original.Preview), original.Preview)
+            const preview = (original.Preview && original.Preview.length)
+                ? await downloadFile(locals.pb.files.getURL(original, original.Preview), original.Preview)
+                : null
             const record = {
                 "Subject": original.Subject + ' Clone',
                 "Created_by": locals.user.email,
@@ -90,7 +92,6 @@ export const actions = {
             return fail(400, { id, missing: true })
         }
     }
-    // TODO delete/rename
 } satisfies Actions
 
 async function downloadFile(url, filename) {

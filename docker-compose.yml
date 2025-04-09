@@ -12,7 +12,7 @@ services:
       - migrations:/pb_migrations
 
   email-builder:
-    build:
+    build: .
     container_name: email-builder
     depends_on:
       - pocketbase

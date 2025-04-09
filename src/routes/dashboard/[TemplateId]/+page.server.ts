@@ -21,10 +21,10 @@ export const actions = {
 	save: async ({ request, locals }) => {
 		const data = await request.formData()
         const content = data.get('content')
-        const html = data.get('html')
+        const html = data.get('html')?.toString() || ''
         const templateId = data.get('templateId')
 
-        const browser = await puppeteer.launch({})
+        const browser = await puppeteer.launch()
         let preview: Uint8Array<ArrayBufferLike>|null = null
 
         try {
