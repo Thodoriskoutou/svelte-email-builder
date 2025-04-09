@@ -16,6 +16,10 @@ COPY package*.json ./
 
 COPY --from=builder /email-builder/build ./
 
+RUN bunx playwright install firefox
+
+RUN bunx playwright install-deps
+
 EXPOSE 3000
 
 ENTRYPOINT ["bun","./index.js"]
