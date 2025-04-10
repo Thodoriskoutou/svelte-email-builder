@@ -1,41 +1,38 @@
-import { type Handle } from '@sveltejs/kit'
+import { redirect, type Handle } from '@sveltejs/kit'
+import { sequence } from '@sveltejs/kit/hooks';
 import PocketBase from 'pocketbase'
 
-function redirect(location: string, body?: string) {
-	return new Response(body, {
-		status: 303,
-		headers: { location }
-	});
-}
-
-export const handle: Handle = async ({ event, resolve }) => {
-    const pb = new PocketBase(Bun.env.POCKETBASE_URL ?? 'http://127.0.0.1:8090')
-    pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '')
+export const authentication: Handle = async ({ event, resolve }) => {
+    event.locals.pb = new PocketBase(Bun.env.POCKETBASE_URL ?? 'http://127.0.0.1:8090')
+    event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '')
     try {
-        if (pb.authStore.isValid) {
-            await pb.collection('users').authRefresh()
-        } else {
-            if (!event.url.pathname.startsWith('/login')) {
-                return redirect('/login')
-            }
-        }
+        event.locals.pb.authStore.isValid && await event.locals.pb.collection('users').authRefresh()
     } catch (_) {
-        pb.authStore.clear()
+        event.locals.pb.authStore.clear()
     }
 
     if (event.url.pathname.length < 2) {
-        return redirect('/dashboard')
+        redirect(303, '/dashboard')
     }
-
-    event.locals.pb = pb
-    event.locals.user = pb.authStore.record
 
     const response = await resolve(event)
 
-    response.headers.set(
-        'set-cookie',
-        pb.authStore.exportToCookie({ httpOnly: false }),
-    )
+    response.headers.append('set-cookie', event.locals.pb.authStore.exportToCookie({ sameSite: 'Lax' }));
 
     return response
 }
+
+const unprotectedPrefix = ['/login', '/register', '/auth' ];
+
+export const authorization: Handle = async ({ event, resolve }) => {
+	if (!unprotectedPrefix.some((path) => event.url.pathname.startsWith(path)) && event.url.pathname !== '/') {
+		const loggedIn = await event.locals.pb.authStore.model;
+		if (!loggedIn) {
+			throw redirect(303, '/login');
+		}
+	}
+	const result = await resolve(event);
+	return result;
+};
+
+export const handle = sequence(authentication, authorization)

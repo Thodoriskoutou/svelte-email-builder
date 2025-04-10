@@ -1,34 +1,27 @@
 <script lang="ts">
-import { applyAction, enhance } from '$app/forms'
-import type { PageProps } from '../$types'
-import PocketBase from 'pocketbase'
+import type { PageProps } from './$types'
 
-let { data }: PageProps = $props()
-
-const pb = new PocketBase(data.pb_url)
-
-$effect(async()=>{
-    if(data.auth){
-        await pb.collection('users').authWithOAuth2({ provider: data.auth });
-    }
-})
+let { data, form }: PageProps = $props()
 </script>
 
 <div class="wrapper">
     <div class="container">
-        <div class="heading">Log In</div>
-        <form class="form" 
-        method="POST"
-        use:enhance={() => {
-            return async ({ result }) => {
-                pb.authStore.loadFromCookie(document.cookie)
-                await applyAction(result)
-            }
-        }}
-        >
+        <div class="heading">Email Builder Log In</div>
+        {#if form?.fail || data?.fail}
+        <div class="error">
+            {data.fail ? "Something went wrong with OAuth!" : form?.message}
+        </div>
+        {/if}
+        <form class="form"  method="POST" action="?/login">
             <input required class="input" type="email" name="email" id="email" placeholder="E-mail" >
             <input required class="input" type="password" name="password" id="password" placeholder="Password" > 
             <input class="login-button" type="submit" value="Sign In">
+        </form>
+        <hr />
+        <form class="form" method="post">
+            {#each data.providers as provider}
+            <button class="login-button" formaction="?/{provider.name}">Sign in via {provider.displayName}</button>
+            {/each}
         </form>
     </div>
 </div>
@@ -57,6 +50,10 @@ $effect(async()=>{
     font-weight: 900;
     font-size: 30px;
     color: rgb(34, 139, 34);
+}
+
+.error {
+    color: red;
 }
 
 .form {

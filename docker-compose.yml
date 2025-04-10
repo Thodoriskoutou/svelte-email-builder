@@ -20,8 +20,8 @@ services:
       - "3417:3000"
     restart: unless-stopped
     environment:
-      - POCKETBASE_URL=http://pocketbase # replace with an FQDN via an SSL enabled reverse proxy for oAuth2 to work
-      # - OAUTH2_PROVIDER=github
+      - POCKETBASE_URL=http://pocketbase # replace with an FQDN via an (SSL enabled for oAuth2) reverse proxy
+      # - CALLBACK_URL=https://emailbuilder.mydomain.com/auth/callback/ # replace with the app url, keep "/auth/callback/" path
 
 volumes:
   data:
