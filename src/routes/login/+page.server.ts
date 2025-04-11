@@ -4,7 +4,7 @@ import type { PageServerLoad } from './$types'
 import type { ClientResponseError } from 'pocketbase';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
-    if (locals.pb.authStore.model) {
+    if (locals.pb.authStore.record) {
         redirect(303, '/dashboard')
     }
 
@@ -38,15 +38,13 @@ export const actions: Actions = {
         redirect(303, '/dashboard')
     },
     // oAuth2
-    default: async ({ locals, cookies, url }) => {
+    oauth2: async ({ locals, cookies, request }) => {
         const authMethods = await locals.pb.collection('users').listAuthMethods()
         if(!authMethods.oauth2.enabled) {
             return fail(400, { method: 'oauth2', missing: true })
         }
-        let provider = ''
-        for (const p of url.searchParams.keys()) {
-            provider = p.slice(1)
-        }
+        const data = await request.formData()
+        const provider = data.get('provider') || ''
         if (!provider.length) {
             return fail(400, { provider, missing: true })
         }
@@ -56,7 +54,7 @@ export const actions: Actions = {
         }
         cookies.set('provider', JSON.stringify(found), {httpOnly: true, path: `/auth/callback/${provider}`})
 
-        redirect(303, found.authUrl + Bun.env.CALLBACK_URL + found.name)
+        redirect(303, found.authURL + '&redirect_url=' + Bun.env.CALLBACK_URL + found.name)
     },
     logout: async ({ locals }) => {
         await locals.pb.authStore.clear()

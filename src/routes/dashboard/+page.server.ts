@@ -24,7 +24,7 @@ export const actions = {
         if(subject && subject.length) {
             const record = {
                 "Subject": subject,
-                "Created_by": locals.user.email,
+                "Created_by": locals.pb.authStore.record?.email,
                 "Content": null
             }
             await locals.pb.collection('newsletters').create(record)
@@ -72,7 +72,7 @@ export const actions = {
                 : null
             const record = {
                 "Subject": original.Subject + ' Clone',
-                "Created_by": locals.user.email,
+                "Created_by": locals.pb.authStore.record?.email,
                 "Content": original.Content,
                 "Images": images,
                 "Preview": preview

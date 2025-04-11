@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit'
-import type { RequestHandler } from '/$types'
+import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = async ({locals, url, cookies}) => {
     const provider = JSON.parse(cookies.get('provider') || '{}')
@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({locals, url, cookies}) => {
             url.searchParams.get('code') || '',
             provider.codeVerifier,
             Bun.env.CALLBACK_URL + provider.name
-        )        
+        )
     } catch (error) {
         console.error(error)
         redirect(303, '/login?fail=true')

@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PageProps } from './$types'
+import { enhance } from '$app/forms'
 
 let { data, form }: PageProps = $props()
 </script>
@@ -12,16 +13,19 @@ let { data, form }: PageProps = $props()
             {data.fail ? "Something went wrong with OAuth!" : form?.message}
         </div>
         {/if}
-        <form class="form"  method="POST" action="?/login">
+        <form class="form"  method="POST" action="?/login" use:enhance>
             <input required class="input" type="email" name="email" id="email" placeholder="E-mail" >
             <input required class="input" type="password" name="password" id="password" placeholder="Password" > 
             <input class="login-button" type="submit" value="Sign In">
         </form>
         <hr />
-        <form class="form" method="post">
-            {#each data.providers as provider}
-            <button class="login-button" formaction="?/{provider.name}">Sign in via {provider.displayName}</button>
-            {/each}
+        <form class="form" method="post" action="?/oauth2" use:enhance>
+            <select class="input" name="provider">
+                {#each data.providers as provider}
+                    <option value="{provider.name}">Use {provider.displayName}</option>
+                {/each}
+            </select>
+            <button class="login-button">Sign In</button>
         </form>
     </div>
 </div>
