@@ -54,7 +54,7 @@ export const actions: Actions = {
         }
         cookies.set('provider', JSON.stringify(found), {httpOnly: true, path: `/auth/callback/${provider}`})
 
-        redirect(303, found.authURL + '&redirect_url=' + Bun.env.CALLBACK_URL + found.name)
+        redirect(303, found.authURL + '&redirect_url=' + Bun.env.ORIGIN + '/auth/callback/' + found.name)
     },
     logout: async ({ locals }) => {
         await locals.pb.authStore.clear()

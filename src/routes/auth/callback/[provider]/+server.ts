@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({locals, url, cookies}) => {
             provider.name,
             url.searchParams.get('code') || '',
             provider.codeVerifier,
-            Bun.env.CALLBACK_URL + provider.name
+            Bun.env.ORIGIN + '/auth/callback/' + provider.name
         )
     } catch (error) {
         console.error(error)
