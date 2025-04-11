@@ -3,8 +3,7 @@ import type {EditorRef, EmailEditor, EmailEditorProps } from "react-email-editor
 import Icon from "@iconify/svelte/dist/Icon.svelte";
 import EmailEdit from "$lib/EmailEdit.svelte"
 import type { PageProps } from './$types'
-import { enhance, applyAction } from '$app/forms'
-import { goto } from '$app/navigation'
+import { enhance } from '$app/forms'
 
 let { data }: PageProps = $props()
 let editor: any

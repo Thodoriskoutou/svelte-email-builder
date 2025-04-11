@@ -42,13 +42,20 @@ Import the pb_schema.json to your PocketBase instance (merge)
 
 Make sure your PocketBase server is running
 
-Environment Variables
+## Environment Variables
 See .env.example for required variables:
 ```bash
 POCKETBASE_URL=http://127.0.0.1:8090
-OAUTH2_PROVIDER=mailcow
+ORIGIN=http://127.0.0.1:3000
 AUTOSAVE_INTERVAL=60
 ```
+
+### Autosave
+
+- The interval is in seconds
+- Leave `AUTOSAVE_INTERVAL` blank to disable it
+- Set it to `0` to autosave upon a change instead of an interval
+- There is a 2 second minimum interval between saves to limit server load
 
 # ☁️ Deploy to production
 [Install docker](https://docs.docker.com/engine/install/)
@@ -80,9 +87,9 @@ This email builder was created as part of a Full Stack Internship Assignment. Ke
 
 - Although the ground work for multi-user workflow is there, there's no ACL whatsoever. All users can see and edit all templates.
 - Due to the above multiple users editing the same template can result in data loss.
-- You need a reverse proxy and 2 FQDNs (1 for pocketbase and 1 for email builder) in order to use the docker deployment, else:
-  1. Images will be uploaded, but won't show in the frontend
-  2. You cannot use oAuth2
+- You need a reverse proxy and 2 FQDNs (1 for pocketbase and 1 for email builder) in order to use the docker deployment, else images will be uploaded, but won't show in the frontend
+- In nginx, in the email-builder vhost you'll need `proxy_set_header Origin http://$host;` for sveltekit form actions to work
+- For oAuth2 you need to use email builder's `/auth/callback/[provider]` as your redirect url in your provider's settings
 
 # 🛠️ Tech Stack
 - Frontend: Svelte 5

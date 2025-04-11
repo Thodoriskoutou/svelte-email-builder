@@ -37,7 +37,7 @@ export const actions = {
 
         const screenshot = new Blob([preview!], { type: 'image/png' })
         const record = {
-            "Updated_by": locals.user.email,
+            "Updated_by": locals.pb.authStore.record?.email,
             "Content": content,
             "Preview": preview ? new File([screenshot], 'screenshot.png', { type: 'image/png' }) : null
         }

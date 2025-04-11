@@ -1,11 +1,9 @@
 <script lang="ts">
 import type { PageProps } from './$types'
 import { enhance, applyAction } from '$app/forms'
-import { goto } from '$app/navigation'
-import Icon from "@iconify/svelte/dist/Icon.svelte";
-import type { Editor, EmailEditorProps } from 'react-email-editor';
+import Icon from "@iconify/svelte/dist/Icon.svelte"
+
 let { data }: PageProps = $props()
-let editor: Editor
 let locale: Intl.DateTimeFormat = $state(new Intl.DateTimeFormat('en-US', {
     dateStyle: "short",
     timeStyle: "short",
@@ -13,9 +11,9 @@ let locale: Intl.DateTimeFormat = $state(new Intl.DateTimeFormat('en-US', {
 
 let renameIndex = $state(null);
 
-let deleteIndex = $state(null)
+let deleteIndex: string|null = $state(null)
 
-function deletetemplate(templateId){
+function deletetemplate(templateId: string){
     deleteIndex = deleteIndex === templateId ? null : templateId;
 }
 
@@ -50,23 +48,15 @@ $effect(()=>{
             />
             <button class="create-template-btn"><span class="create">Create Template<Icon icon="material-symbols:add"/></span></button>
         </form>
-        <form method="POST" action="?/logout" use:enhance={() => {
-            return async ({ result }) => {
-                if (result.type === 'redirect') {
-                    goto(result.location, { invalidateAll: true })
-                } else {
-                    await applyAction(result)
-                }
-            }
-        }}>
+        <form method="POST" action="/login?/logout">
             <button class="logout-btn"><span class="create">Logout<Icon icon="material-symbols:logout"/></span></button>
         </form>
     </div>
 </section>
 <ul class="newsletter-list">
-{#each data.templates as template,index}
-        <li class="newsletter-item">
-            <a href="/dashboard/{template.id}">
+{#each data.templates as template,_}
+    <li class="newsletter-item">
+        <a href="/dashboard/{template.id}">
             {#if template.Preview}
                 <img src={template.thumbnail} alt={template.Subject} />
             {:else}
@@ -122,14 +112,11 @@ $effect(()=>{
                 </form>
             </div>
         {/if}
-        </li>
-
-    
+    </li>
 {:else}
     <li>No newsletters available.</li>
 {/each}
 </ul>
-
 
 <style>
 .welcome-message {
