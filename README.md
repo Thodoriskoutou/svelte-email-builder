@@ -42,13 +42,20 @@ Import the pb_schema.json to your PocketBase instance (merge)
 
 Make sure your PocketBase server is running
 
-Environment Variables
+## Environment Variables
 See .env.example for required variables:
 ```bash
 POCKETBASE_URL=http://127.0.0.1:8090
-OAUTH2_PROVIDER=mailcow
+ORIGIN=http://127.0.0.1:3000
 AUTOSAVE_INTERVAL=60
 ```
+
+### Autosave
+
+- The interval is in seconds
+- Leave `AUTOSAVE_INTERVAL` blank to disable it
+- Set it to `0` to autosave upon a change instead of an interval
+- There is a 2 second minimum interval between saves to limit server load
 
 # ☁️ Deploy to production
 [Install docker](https://docs.docker.com/engine/install/)
