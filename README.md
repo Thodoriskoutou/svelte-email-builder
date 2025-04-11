@@ -82,10 +82,7 @@ This email builder was created as part of a Full Stack Internship Assignment. Ke
 - Due to the above multiple users editing the same template can result in data loss.
 - You need a reverse proxy and 2 FQDNs (1 for pocketbase and 1 for email builder) in order to use the docker deployment, else images will be uploaded, but won't show in the frontend
 - In nginx, in the email-builder vhost you'll need `proxy_set_header Origin http://$host;` for sveltekit form actions to work
-- oAuth2 needs:
-  1. to use email builder's `/auth/callback/[provider]` as your redirect url, instead if pocketbase's
-  2. a realtime (websocket) connection, which needs to be supported by your reverse proxy/ies. e.g. Cloudflare uses quik (HTTP 3), which needs to be enabled locally. For chromium based browsers: `chrome://flags/#enable-quic`
-  3. to open a popup, which might be blocked. check your address bar. For Safari see here: https://github.com/pocketbase/pocketbase/discussions/2429#discussioncomment-5943061
+- For oAuth2 you need to use email builder's `/auth/callback/[provider]` as your redirect url in your provider's settings
 
 # 🛠️ Tech Stack
 - Frontend: Svelte 5
