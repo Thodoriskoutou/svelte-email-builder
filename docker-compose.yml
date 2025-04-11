@@ -20,8 +20,8 @@ services:
       - "3417:3000"
     restart: unless-stopped
     environment:
-      - POCKETBASE_URL=http://pocketbase # replace with an FQDN via an (SSL enabled for oAuth2) reverse proxy
-      # - ORIGIN=https://emailbuilder.mydomain.com # replace with the app url
+      - ORIGIN=https://emailbuilder.mydomain.com # replace with an FQDN served by a reverse proxy
+      - POCKETBASE_URL=https://emailbuilder.db.mydomain.com # replace with an FQDN served by a reverse proxy
 
 volumes:
   data:
